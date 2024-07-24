@@ -4,7 +4,7 @@
 The brief for this task was to make use of three GeoNames APIs, found here: [https://www.geonames.org/export/ws-overview.html](https://www.geonames.org/export/ws-overview.html).
 
 ## Deployment
-The live site is deployed at [www.seankennelly.com/task](www.seankennelly.com/task).
+The live site is deployed at [www.seankennelly.com/task](www.seankennelly.com/task/).
 
 ## Features
 This site offers three GeoNames APIs:
