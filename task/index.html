@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Geonames API | IT Career Switch</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Seán Kennelly" />
+    <meta name="description" content="Geonames API" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>GeoName APIs</h1>
+        <p>
+          The APIs below can be used to access and display data from
+          <a href="https://www.geonames.org/">GeoNames</a>.
+        </p>
+      </div>
+
+      <div class="main">
+        <h2>GeoName APIs</h2>
+        <!-- NEW BOOTSTRAP API TABLE -->
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th scope="col" class="col-5">API Name</th>
+              <th scope="col" class="col-5">Description</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr>
+              <th scope="row">Country Code & Currency</th>
+              <td>
+                <select id="currencyCountry">
+                  <option value="GB">Great Britain</option>
+                  <option value="MX">Mexico</option>
+                  <option value="CM">Cameroon</option>
+                  <option value="ID">Indonesia</option>
+                  <option value="NZ">New Zealand</option>
+                </select>
+              </td>
+              <td>
+                <button type="button" class="btn btn-primary" id="btn-currency">
+                  Run
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Find Nearest Country Name to Coordinates</th>
+              <td>
+                <label for="latitudeCountry"
+                  >Latitude (between -90 and 90):</label
+                >
+                <input
+                  type="number"
+                  id="latitudeCountry"
+                  name="latitudeCountry"
+                  min="-90"
+                  max="90"
+                />
+                <label for="longitudeCountry"
+                  >Longitude (between -180 and 180):</label
+                >
+                <input
+                  type="number"
+                  id="longitudeCountry"
+                  name="longitudeCountry"
+                  min="-180"
+                  max="180"
+                />
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="btn-nearest-country"
+                >
+                  Run
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Timezone Information</th>
+              <td>
+                <label for="latitudeTimezone"
+                  >Latitude (between -90 and 90):</label
+                >
+                <input
+                  type="number"
+                  id="latitudeTimezone"
+                  name="latitudeTimezone"
+                  min="-90"
+                  max="90"
+                />
+                <label for="longitudeTimezone"
+                  >Longitude (between -180 and 180):</label
+                >
+                <input
+                  type="number"
+                  id="longitudeTimezone"
+                  name="longitudeTimezone"
+                  min="-180"
+                  max="180"
+                />
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="btn-timezones"
+                >
+                  Run
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- END API TABLE -->
+
+        <div id="divResults">
+          <!-- RESULTS TABLE -->
+          <h2>Results</h2>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="col-3">Data Type</th>
+                <th scope="col" class="col-9">Result</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr>
+                <th scope="row">Country Code</th>
+                <td id="txtCountryCode"></td>
+              </tr>
+              <tr>
+                <th scope="row">Currency</th>
+                <td id="txtCurrency"></td>
+              </tr>
+              <tr>
+                <th scope="row">Country Name</th>
+                <td id="txtCountryName"></td>
+              </tr>
+              <tr>
+                <th scope="row">Timezone ID</th>
+                <td id="txtTimezoneId"></td>
+              </tr>
+              <tr>
+                <th scope="row">GMT Offset</th>
+                <td id="txtGMTOffset"></td>
+              </tr>
+              <tr>
+                <th scope="row">Sunrise</th>
+                <td id="txtSunrise"></td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- END BOOTSTRAP TABLE -->
+        </div>
+
+        <!-- End copy example -->
+      </div>
+    </div>
+
+    <div id="preloader"></div>
+
+    <!-- <script src="js/bootstrap/bootstrap.bundle.min.js"></script> -->
+    <script type="application/javascript" src="js/jquery-3.7.1.min.js"></script>
+    <script type="application/javascript" src="js/script.js"></script>
+  </body>
+</html>
