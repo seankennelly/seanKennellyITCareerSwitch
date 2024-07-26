@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Gazetteer</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-16x16.png" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="libraries/css/leaflet.css" />
+    <!-- Leaflet Extra Markers -->
+    <link rel="stylesheet" href="libraries/css/leaflet.extra-markers.css" />
+    <!-- Leaflet CDNs (to be replaced) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.4.0/easy-button.min.css" />
+    <!-- I am leaving this here as I'm not sure if I need it. No download-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="libraries/css/bootstrap.min.css" />
+    <!-- My Stylesheet -->
+    <link rel="stylesheet" href="libraries/css/styles.css" />
+  </head>
+  <body>
+    <span id="selectContainer">
+      <select id="countrySelect" class="form-select shadow-sm">
+        <!-- populate from an AJAX CALL to a PHP routine that returns a JSON object that is an array of just ISO codes and names from countryBorders.geo.json -->
+        <!-- <option value="AF">Afghanistan</option> -->
+      </select>
+    </span>
+
+    <div id="map"></div>
+
+    <!-- example modal layout -->
+    <div id="exampleModal" class="modal" data-bs-backdrop="false" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-success bg-gradient text-white">
+            <h5 class="modal-title">Overview</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-street-view fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-heart fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-car fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-book fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-bath fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-bell fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-anchor fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-money-bill fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-wifi fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-globe fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-bicycle fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-landmark fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-tree fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-bookmark fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-bell fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-fire fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-key fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-newspaper fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-rocket fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-wheelchair fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <i class="fa-solid fa-monument fa-xl text-success"></i>
+                </td>
+                <td>Attribute</td>
+                <td class="text-end">value</td>
+              </tr>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="preloader"></div>
+
+    <!-- Toastify CDN (delete if unused) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.js"></script>
+    <!-- Leaflet -->
+    <script src="libraries/js/leaflet/leaflet.js"></script>
+    <!-- Leaflet Extra Markers -->
+    <script src="libraries/js/leaflet.extra-markers.js"></script>
+    <!-- Leaflet Marker Clusters CDN. Find out how to replace -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+    <!-- jQuery -->
+    <script src="libraries/js/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="libraries/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.4.0/easy-button.min.js"></script>
+    <!-- My Script -->
+    <script src="libraries/js/script.js"></script>
+  </body>
+</html>
