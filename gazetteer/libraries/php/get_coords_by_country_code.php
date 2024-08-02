@@ -44,4 +44,3 @@
   } else {
       echo json_encode(["error" => "No country code provided."]);
   }
-?>

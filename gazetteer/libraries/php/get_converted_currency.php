@@ -8,4 +8,3 @@
   $data = fetch_data($url);
 
   print_r($data);
-?>

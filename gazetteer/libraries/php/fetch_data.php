@@ -10,4 +10,3 @@
     curl_close($ch);
     return $data;
   }
-?>
