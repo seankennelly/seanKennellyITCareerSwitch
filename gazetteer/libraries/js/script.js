@@ -461,7 +461,6 @@ const getNews = (countryCode) => {
       const newsData = data.articles;
       const newsLinksList = $("#news-links-list");
       newsLinksList.empty();
-      console.log(newsData);
       if (newsData && newsData.length > 0) {
         $.each(newsData, function (index, article) {
             const articleImg = article.image;
