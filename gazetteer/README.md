@@ -2,7 +2,7 @@
 
 https://seankennelly.com/gazetteer
 
-![A screenshot of my app](/images/readme_images/readme_img_1.png)
+![A screenshot of my app](gazetteer/images/readme_images/readme_img_1.png)
 
 - [Learning Outcomes](#learning-outcomes)
 - [Installation](#installation)
@@ -35,7 +35,7 @@ To run the app locally, download the files and create a `config.php` file in `li
 As of August 2024 all of these API keys can be gotten for free. OpenWeather's free option is a little tricky to find but a `Subscribe for free` link is in the footer. 
 
 Set out the file like in the below diagram and fill in the variables with the associated API keys. These will be fed to the cURL requests in various PHP files.
-![A screenshot of my config.php file](/images/readme_images/readme_img_2.png)
+![A screenshot of my config.php file](gazetteer/images/readme_images/readme_img_2.png)
 
 ## Technologies
 This application makes use of:
@@ -75,7 +75,7 @@ The info modal displays data on the selected country, including:
 
 #### Currency
 The currency modal displays the name, syymbol and currency code for the selected country. It also has a converter function, which is set to always offer the country's exchange rate with the user's home country:
-![A screenshot of the currency modal](/images/readme_images/readme_img_3.png)
+![A screenshot of the currency modal](gazetteer/images/readme_images/readme_img_3.png)
 
 #### Current Weather
 This modal shows current weather for the selected country, including:
