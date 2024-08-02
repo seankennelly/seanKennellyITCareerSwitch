@@ -38,7 +38,7 @@
     <div id="map"></div>
 
     <!-- Info Modal -->
-    <div id="infoModal" class="modal" data-bs-backdrop="false" tabindex="-1">
+    <div id="info-modal" class="modal" data-bs-backdrop="false" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content shadow">
           <div class="modal-header bg-success bg-gradient text-white">
@@ -237,6 +237,24 @@
           </div>
           <div class="modal-body">
             <ul id="wiki-links-list" class="list-group"></ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Modal -->
+    <div id="news-modal" class="modal" data-bs-backdrop="false" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-success bg-gradient text-white">
+            <h5 class="modal-title">News Headlines</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul id="news-links-list" class="list-group"></ul>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal">Close</button>

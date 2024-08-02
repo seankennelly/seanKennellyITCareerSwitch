@@ -69,3 +69,7 @@ body {
   width: 200px;
   margin: 0 auto;
 }
+
+#news-links-list img {
+  max-width: 100%;
+}

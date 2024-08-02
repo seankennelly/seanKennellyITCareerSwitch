@@ -4,7 +4,7 @@ https://seankennelly.com/gazetteer
 
 ![A screenshot of my app](images/readme_images/readme_img_1.png)
 
-- [Learning Outcomes](#learning-outcomes)
+- [Project Outline](#project-outline)
 - [Installation](#installation)
 - [Technologies](#technologies)
 - [Key Features](#key-features)
@@ -15,6 +15,7 @@ https://seankennelly.com/gazetteer
     - [Currency](#currency)
     - [Current Weather](#current-weather)
     - [Wikipedia Links](#wikipedia-links)
+    - [News](#news)
     - [Toggle Buttons](#toggle-buttons)
     - [Home](#home)
   - [Known Issues](#known-issues)
@@ -22,8 +23,8 @@ https://seankennelly.com/gazetteer
 
 ---
 
-## Learning Outcomes
-The brief for this project was to a creative an interactive gazetteer-style map web application, populated by geographical data pulled from APIs. The app needed to be responsive and pull data from a variety of sources to create an interesting end-user experience.
+## Project Outline
+The brief for this project was to a creative an interactive gazetteer-style map web application, populated by geographical data pulled from APIs. The app needed to be responsive and pull data from a variety of sources to create an interesting end-user experience. Due to its highly interactive nature, I have concentrated on a minimalist design, encouraging users to explore the available controls to discover functionality. 
 
 ## Installation
 To run the app locally, download the files and create a `config.php` file in `libraries/php`. This file will hold your API keys for the following APIs:
@@ -88,6 +89,10 @@ This modal shows current weather for the selected country, including:
 #### Wikipedia Links
 This modal shows the top Wikipedia links for the selected country.
 
+#### News
+This modal shows the top 10 headlines for the country that has been selected.
+![A screenshot of the news modal](images/readme_images/readme_img_4.png)
+
 #### Toggle Buttons
 The three toggle buttons will show or hide map information pertaining to:
 - Landmarks
@@ -99,11 +104,9 @@ The blue Home button will take them back to their location country.
 
 
 ### Known Issues
-Unfortunately due to the nature of working with APIs and third-party data sources, not all of the information can be guaranteed to be reliable. Some of OpenCage's data has been found to be incorrect, despite my API calls being specific and adhering to their documentation. This failing is addressed [here](https://opencagedata.com/api#ambiguous-results).
-
-Despite this, extensive testing has shown that nearly all data displayed by my app is reliable and correct.
-
-The app's intial load time is also dependent on it's initialsing API calls, so despite being lightweight in size it can be sluggish to start.
+- Unfortunately due to the nature of working with APIs and third-party data sources, not all of the information can be guaranteed to be reliable. Some of OpenCage's data has been found to be incorrect, despite my API calls being specific and adhering to their documentation. This failing is addressed [here](https://opencagedata.com/api#ambiguous-results). Despite this, extensive testing has shown that nearly all data displayed by my app is reliable and correct.
+- The app's intial load time is also dependent on it's initialsing API calls, so despite being lightweight in size it can be sluggish to start.
+- News from other countries is in that country's language. I experimented with pulling only results in the English language, but since most countries don't publish their news in English this meant that the modal was mostly blank.
 
 
 ### Prospective Improvements

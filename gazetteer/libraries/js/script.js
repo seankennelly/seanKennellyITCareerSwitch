@@ -40,7 +40,7 @@ let basemaps = {
 let infoBtn = L.easyButton(
   "fa-info fa-xl",
   function (btn, map) {
-    $("#infoModal").modal("show");
+    $("#info-modal").modal("show");
   },
   "Country Information"
 );
@@ -64,6 +64,13 @@ let weatherBtn = L.easyButton(
     $("#weather-modal").modal("show");
   },
   "Weather"
+);
+let newsBtn = L.easyButton(
+  "fa-newspaper fa-xl",
+  function (btn, map) {
+    $("#news-modal").modal("show");
+  },
+  "News Headlines"
 );
 let hospitalBtn = L.easyButton(
   "fa-house-medical fa-xl",
@@ -220,7 +227,7 @@ const setMapLocation = (latitude, longitude) => {
   layerControl = L.control.layers(basemaps).addTo(map);
 
   // Buttons added to map
-  let infoBar = L.easyBar([infoBtn, currencyBtn, weatherBtn, wikiBtn]);
+  let infoBar = L.easyBar([infoBtn, currencyBtn, weatherBtn, wikiBtn, newsBtn]);
   infoBar.addTo(map);
   let showHideBar = L.easyBar([landmarkBtn, hospitalBtn, airportBtn]);
   showHideBar.addTo(map);
@@ -237,6 +244,7 @@ const handleCountryChange = (countryCode) => {
       getCountryInfo(countryCode);
       getAirports(countryCode);
       getHospitals(countryCode);
+      getNews(countryCode);
     })
     .catch((error) => {
       console.error("Error fetching coordinates:", error);
@@ -435,6 +443,39 @@ const getWeather = (countryLatitude, countryLongitude) => {
       } else {
         console.log("Weather information not found.");
         alert("Weather info not found");
+      }
+    },
+    error: function (error) {
+      console.error("Error fetching data:", error);
+    },
+  });
+};
+
+const getNews = (countryCode) => {
+  countryCode = countryCode.toLowerCase();
+  $.ajax({
+    url: "libraries/php/get_news.php?countryCode=" + countryCode,
+    type: "GET",
+    dataType: "json",
+    success: function (data) {
+      const newsData = data.articles;
+      const newsLinksList = $("#news-links-list");
+      newsLinksList.empty();
+      console.log(newsData);
+      if (newsData && newsData.length > 0) {
+        $.each(newsData, function (index, article) {
+            const articleImg = article.image;
+            const title = article.title;
+            const url = article.url;
+            const listItem = $("<li class='list-group-item'>");
+            const img = $("<img>").attr("src", articleImg).attr("alt", title);
+            const anchorProperty = $("<a>").attr("href", url).attr("target", "_blank").attr("rel", "noopener").text(title);
+            listItem.append(img);
+            listItem.append(anchorProperty);
+            newsLinksList.append(listItem);
+      });
+      } else {
+        newsLinksList.append("<li class='list-group-item'>No results found</li>");
       }
     },
     error: function (error) {
@@ -706,4 +747,4 @@ const convertDMS = (dms) => {
     decimal = -decimal;
   }
   return decimal;
-}
+};
