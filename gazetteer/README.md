@@ -115,5 +115,3 @@ To prevent 'project creep' I gave myself targets to hit and restricted myself fr
 - Replace alerts with Bootstrap Toasts. The alerts the site currently uses are in case of errors, and so far in testing I have not come across them. This can be considered a minor improvement.
 
 - Get more airport information. My preferred source of airport information was AirLabs, but when I signed up for my API key I was informed that due to high numbers of signups, they are now manually assessing API key requests, and I was unable to get mine in time for this project.
-
-- Addition of a News Modal
