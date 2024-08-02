@@ -1,15 +1,3 @@
-// PRELOADER
-$(window).on("load", function () {
-  if ($("#preloader").length) {
-    $("#preloader")
-      .delay(1000)
-      .fadeOut("slow", function () {
-        $(this).remove();
-      });
-  }
-});
-// END PRELOADER
-
 // --------------------
 // GLOBAL DECLARATIONS
 // --------------------
@@ -29,7 +17,9 @@ let airportsLayer;
 let landmarksLayer;
 let secondaryData;
 
+// -----------
 // Tile Layers
+// -----------
 const tileLayers = [
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
     attribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012",
@@ -44,7 +34,9 @@ let basemaps = {
   Satellite: tileLayers[1],
 };
 
+// -------
 // Buttons
+//--------
 let infoBtn = L.easyButton(
   "fa-info fa-xl",
   function (btn, map) {
@@ -73,15 +65,65 @@ let weatherBtn = L.easyButton(
   },
   "Weather"
 );
-// let newsBtn = L.easyButton("fa-newspaper fa-xl", function (btn, map) {
-//   $("#exampleModal").modal("show");
-// });
+let hospitalBtn = L.easyButton(
+  "fa-house-medical fa-xl",
+  function (btn, map) {
+    if (map.hasLayer(hospitalsLayer)) {
+      map.removeLayer(hospitalsLayer);
+    } else {
+      map.addLayer(hospitalsLayer);
+    }
+  },
+  "Show Hospitals"
+);
+let landmarkBtn = L.easyButton(
+  "fa-landmark fa-xl",
+  function (btn, map) {
+    if (map.hasLayer(landmarksLayer)) {
+      map.removeLayer(landmarksLayer);
+    } else {
+      map.addLayer(landmarksLayer);
+    }
+  },
+  "Show Landmarks"
+);
+let airportBtn = L.easyButton(
+  "fa-plane fa-xl",
+  function (btn, map) {
+    if (map.hasLayer(airportsLayer)) {
+      map.removeLayer(airportsLayer);
+    } else {
+      map.addLayer(airportsLayer);
+    }
+  },
+  "Show Airports"
+);
+let homeBtn = L.easyButton(
+  "fa-house fa-xl",
+  function (btn, map) {
+    handleCountryChange(userLocationCountryCode);
+    populateDropdownList(userLocationCountryCode);
+  },
+  "Go Home"
+);
+homeBtn.button.style.backgroundColor = "#1C67A1";
+homeBtn.button.style.color = "white";
 
-// ---------------
-// EVENT HANDLERS
-// ---------------
+// ------------------------------------
+// PAGE INITIALISATION & EVENT HANDLERS
+// ------------------------------------
 
-// PAGE INITIALISATION
+// PRELOADER
+$(window).on("load", function () {
+  if ($("#preloader").length) {
+    $("#preloader")
+      .delay(1000)
+      .fadeOut("slow", function () {
+        $(this).remove();
+      });
+  }
+});
+
 $(document).ready(function () {
   populateDropdownList();
   getUserLocation()
@@ -106,16 +148,15 @@ $(document).ready(function () {
   });
 
   $("#user-currency-amount").on("input", convertCurrency);
-
-  // End initialisation
 });
 
 // ----------------------
 // FUNCTION DECLARATIONS
 // ----------------------
+
 const populateDropdownList = (selectedCountryCode = null) => {
   $.ajax({
-    url: "libraries/php/getCountryList.php",
+    url: "libraries/php/get_country_list.php",
     type: "GET",
     dataType: "json",
     success: function (data) {
@@ -148,37 +189,29 @@ const getUserLocation = () => {
           const { latitude, longitude } = position.coords;
 
           $.ajax({
-            url: "libraries/php/getCountryFromCoords.php?lat=" + latitude + "&lng=" + longitude,
+            url: "libraries/php/get_country_from_coords.php?lat=" + latitude + "&lng=" + longitude,
             type: "GET",
             success: function (data) {
               data = JSON.parse(data);
               const countryCode = data.countryCode;
               userLocationCountryCode = countryCode;
-              // Updates country dropdown list with selected country code
               populateDropdownList(countryCode);
-              // Resolve the Promise with the countryCode
               resolve(countryCode);
             },
           });
-          // Sets map to user coordinates
           setMapLocation(latitude, longitude);
         },
         (error) => {
-          reject(error); // Reject the Promise with an error
+          reject(error);
         }
       );
     } else {
-      // Reject the Promise if geolocation is not supported
       reject(new Error("Geolocation not supported"));
     }
   });
 };
 
-// const goHome = () => {
-//   console.log("GOING HOME");
-// }
-
-// This may be for initalisation only! Afterwards map will be set with map.fitBounds with border
+// For initalisation only. Afterwards map is set with map.fitBounds with addBorder()
 const setMapLocation = (latitude, longitude) => {
   map = L.map("map", {
     layers: [tileLayers[0]],
@@ -187,63 +220,34 @@ const setMapLocation = (latitude, longitude) => {
   layerControl = L.control.layers(basemaps).addTo(map);
 
   // Buttons added to map
-  // Info buttons
   let infoBar = L.easyBar([infoBtn, currencyBtn, weatherBtn, wikiBtn]);
   infoBar.addTo(map);
-  // Show/Hide Buttons
-  let hospitalBtn = L.easyButton(
-    "fa-house-medical fa-xl",
-    function (btn, map) {
-      if (map.hasLayer(hospitalsLayer)) {
-        map.removeLayer(hospitalsLayer);
-      } else {
-        map.addLayer(hospitalsLayer);
-      }
-    },
-    "Show Hospitals"
-  );
-  let landmarkBtn = L.easyButton(
-    "fa-landmark fa-xl",
-    function (btn, map) {
-      if (map.hasLayer(landmarksLayer)) {
-        map.removeLayer(landmarksLayer);
-      } else {
-        map.addLayer(landmarksLayer);
-      }
-    },
-    "Show Landmarks"
-  );
-  let airportBtn = L.easyButton(
-    "fa-plane fa-xl",
-    function (btn, map) {
-      if (map.hasLayer(airportsLayer)) {
-        map.removeLayer(airportsLayer);
-      } else {
-        map.addLayer(airportsLayer);
-      }
-    },
-    "Show Airports"
-  );
-
   let showHideBar = L.easyBar([landmarkBtn, hospitalBtn, airportBtn]);
   showHideBar.addTo(map);
+  homeBtn.addTo(map);
+};
 
-  L.easyButton(
-    "fa-house fa-xl",
-    function (btn, map) {
-      handleCountryChange(userLocationCountryCode);
-      populateDropdownList(userLocationCountryCode);
-    },
-    "Go Home"
-  ).addTo(map);
+const handleCountryChange = (countryCode) => {
+  getCoordsByCountryCode(countryCode)
+    .then((coords) => {
+      addBorder(coords);
+      return countryCode;
+    })
+    .then((countryCode) => {
+      getCountryInfo(countryCode);
+      getAirports(countryCode);
+      getHospitals(countryCode);
+    })
+    .catch((error) => {
+      console.error("Error fetching coordinates:", error);
+    });
 };
 
 const getCoordsByCountryCode = (countryCode) => {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: "libraries/php/getCoordsByCountryCode.php",
+      url: "libraries/php/get_coords_by_country_code.php?countryCode=" + countryCode,
       type: "GET",
-      data: { country_code: countryCode },
       dataType: "json",
       success: function (response) {
         if (response.error) {
@@ -271,29 +275,35 @@ const addBorder = (coordArray) => {
   map.fitBounds(polyline.getBounds());
 };
 
-// GET COUNTRY INFO
 const getCountryInfo = (countryCode) => {
   $.ajax({
-    url: "libraries/php/getCountryInfo.php?countryCode=" + countryCode,
+    url: "libraries/php/get_country_info.php?countryCode=" + countryCode,
     type: "GET",
+    error: function (error) {
+      console.error("Error fetching data:", error);
+    },
     success: function (data) {
       let openCageData = data.openCageData;
       let geoNamesData = data.geoNamesData;
       countryName = geoNamesData.geonames[0].countryName;
       console.log("Country name is: ", countryName);
-      // Data for country borders and markers
-      // Resets country borders each time function is called
+      // Resets then sets country borders each time function is called
       countryBorders = [];
       countryBorders.push(geoNamesData.geonames[0].north);
       countryBorders.push(geoNamesData.geonames[0].south);
       countryBorders.push(geoNamesData.geonames[0].east);
       countryBorders.push(geoNamesData.geonames[0].west);
+      // Fetch cities and landmarks
       getCountryFeatures(countryBorders, countryCode);
       // Fetch wiki links
       getWikiLinks(countryName);
+
       // Update Modals
       // Data from GeoNames
-      if (geoNamesData.geonames.length > 0) {
+      if (!geoNamesData.geonames.length > 0) {
+        console.log("GeoNames country information not found.");
+        alert("Country info not found");
+      } else {
         // Update info modal
         $("#capital-city").text(geoNamesData.geonames[0].capital);
         $("#population").text(geoNamesData.geonames[0].population);
@@ -306,12 +316,12 @@ const getCountryInfo = (countryCode) => {
         countryCurrencyCode = geoNamesData.geonames[0].currencyCode;
         $("#selected-country-currency-code").text(countryCurrencyCode);
         getConvertedCurrency(userLocationCurrencyCode);
-      } else {
-        console.log("GeoNames country information not found.");
-        alert("Country info not found");
       }
+
       // Data from OpenCage
-      if (openCageData.results.length > 0) {
+      if (!openCageData.results.length > 0) {
+        console.log("OpenCage country information not found.");
+      } else {
         // Update info modal
         // Format some data
         const telephoneCode = "+" + openCageData.results[0].annotations.callingcode;
@@ -329,19 +339,14 @@ const getCountryInfo = (countryCode) => {
         countryLatitude = openCageData.results[0].annotations.DMS.lat;
         countryLongitude = openCageData.results[0].annotations.DMS.lng;
         getWeather(countryLatitude, countryLongitude);
-      } else {
-        console.log("OpenCage country information not found.");
       }
-    },
-    error: function (error) {
-      console.error("Error fetching data:", error);
     },
   });
 };
 
 const getConvertedCurrency = (userLocationCurrencyCode) => {
   $.ajax({
-    url: "libraries/php/getConvertedCurrency.php?userLocationCurrencyCode=" + userLocationCurrencyCode,
+    url: "libraries/php/get_converted_currency.php?userLocationCurrencyCode=" + userLocationCurrencyCode,
     type: "GET",
     dataType: "json",
     success: function (data) {
@@ -360,38 +365,20 @@ const convertCurrency = () => {
   $("#conversion-result").val(convertedAmount);
 };
 
-const handleCountryChange = (countryCode) => {
-  getCoordsByCountryCode(countryCode)
-    .then((coords) => {
-      addBorder(coords);
-      return countryCode;
-    })
-    .then((countryCode) => {
-      getCountryInfo(countryCode);
-      getAirports(countryCode);
-      getHospitals(countryCode);
-    })
-    .catch((error) => {
-      console.error("Error fetching coordinates:", error);
-    });
-};
-
 const getWikiLinks = (countryName) => {
   $.ajax({
-    url: "libraries/php/getWikiLinks.php?countryName=" + countryName,
+    url: "libraries/php/get_wiki_links.php?countryName=" + countryName,
     type: "GET",
     dataType: "json",
     success: function (data) {
       const wikiLinksList = $("#wiki-links-list");
       wikiLinksList.empty();
-
       if (data.query && data.query.pages) {
         $.each(data.query.pages, function (index, page) {
           const title = page.title;
           const url = "https://en.wikipedia.org/wiki/" + encodeURIComponent(title);
           const listItem = $("<li class='list-group-item'>");
           const anchorProperty = $("<a>").attr("href", url).attr("target", "_blank").attr("rel", "noopener").text(title);
-          const target = "target='_blank' rel='noopener'";
           listItem.append(anchorProperty);
           wikiLinksList.append(listItem);
         });
@@ -409,7 +396,7 @@ const getWeather = (countryLatitude, countryLongitude) => {
   countryLatitude = convertDMS(countryLatitude);
   countryLongitude = convertDMS(countryLongitude);
   $.ajax({
-    url: "libraries/php/getWeather.php?lat=" + countryLatitude + "&lng=" + countryLongitude,
+    url: "libraries/php/get_weather.php?lat=" + countryLatitude + "&lng=" + countryLongitude,
     type: "GET",
     dataType: "json",
     success: function (data) {
@@ -462,14 +449,17 @@ const getCountryFeatures = (countryBorders, countryCode) => {
   let east = countryBorders[2];
   let west = countryBorders[3];
   $.ajax({
-    url: "libraries/php/getCountryFeatures.php?north=" + north + "&south=" + south + "&east=" + east + "&west=" + west + "&countryCode=" + countryCode,
+    url: "libraries/php/get_country_features.php?north=" + north + "&south=" + south + "&east=" + east + "&west=" + west + "&countryCode=" + countryCode,
     type: "GET",
     dataType: "json",
     success: function (data) {
       let citiesData = data.citiesData.geonames;
       secondaryData = data.secondaryData.geonames;
 
-      if (secondaryData) {
+      if (!secondaryData) {
+        console.log("City information not found.");
+        alert("City info not found");
+      } else {
         // Splitting Data in secondaryData. This splits data into arrays based on feature type (city, landmark etc)
         const separatedFeatures = {};
         secondaryData.forEach((city) => {
@@ -482,7 +472,7 @@ const getCountryFeatures = (countryBorders, countryCode) => {
         const separatedFeaturesData = Object.values(separatedFeatures);
         // End data split
 
-        // Combined cities data from both both data sets
+        // Combined cities data from both both datasets
         if (separatedFeaturesData.length > 1) {
           separatedFeaturesData[0].forEach((feature) => {
             const cityExists = citiesData.some((city) => city.name === feature.name);
@@ -527,9 +517,6 @@ const getCountryFeatures = (countryBorders, countryCode) => {
         // Passes data to next function
         // This is to ensure separation of concerns and keep functions readable
         getLandmarks(separatedFeaturesData);
-      } else {
-        console.log("City information not found.");
-        alert("City info not found");
       }
     },
     error: function (error) {
@@ -546,10 +533,9 @@ const getLandmarks = (data) => {
       miscLandmarksData.push(...data[i]);
     }
   }
-
   let combinedLandmarksArray = [];
-  // Filters out airports ( junk data as better data is used for getAiports() )
-  // Filters out administrative authorities ( junk data as these match cities handled in getCountryFeatures() )
+  // Filters out airports junk data, as better data is used for getAiports()
+  // Filters out administrative authorities junk data, as these match cities handled in getCountryFeatures()
   miscLandmarksData.forEach((landmark) => {
     if (landmark.fcodeName !== "airport" && landmark.fcl !== "A") {
       combinedLandmarksArray.push(landmark);
@@ -583,7 +569,7 @@ const getLandmarks = (data) => {
 
 const getAirports = (countryCode) => {
   $.ajax({
-    url: "libraries/php/getAirports.php?countryCode=" + countryCode,
+    url: "libraries/php/get_airports.php?countryCode=" + countryCode,
     type: "GET",
     dataType: "json",
     success: function (data) {
@@ -601,8 +587,6 @@ const getAirports = (countryCode) => {
           shape: "square",
           prefix: "fa",
         });
-
-        // Layer
         airportsLayer = L.markerClusterGroup();
         airportsArray.forEach((airport) => {
           let marker = L.marker([airport.lat, airport.lng], { icon: airportMarker });
@@ -622,7 +606,7 @@ const getAirports = (countryCode) => {
 
 const getHospitals = (countryCode) => {
   $.ajax({
-    url: "libraries/php/getHospitals.php?countryCode=" + countryCode,
+    url: "libraries/php/get_hospitals.php?countryCode=" + countryCode,
     type: "GET",
     dataType: "json",
     success: function (data) {
@@ -640,8 +624,6 @@ const getHospitals = (countryCode) => {
           shape: "square",
           prefix: "fa",
         });
-
-        // Layer
         hospitalsLayer = L.markerClusterGroup();
         hospitalsArray.forEach((hospital) => {
           let marker = L.marker([hospital.lat, hospital.lng], { icon: hospitalMarker });
@@ -707,7 +689,7 @@ const switchLatLng = (coordinates) => {
 };
 
 // Converts OpenCage coordinates from DMS to Lat/Lng
-function convertDMS(dms) {
+const convertDMS = (dms) => {
   if (typeof dms !== "string") {
     throw new Error("Input must be a string");
   }
