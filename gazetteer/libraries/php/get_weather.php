@@ -5,18 +5,20 @@
   $lat = $_GET['lat'];
   $lng = $_GET['lng'];
 
-  $openMeteoUrl = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lng&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m";
 
-  $openWeatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lng&appid=$openweather_api_key";
+  $open_weather_current_url = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lng&units=metric&appid=$openweather_api_key";
+  $open_weather_forecast_url = "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lng&units=metric&appid=$openweather_api_key";
 
-  $openMeteoData = fetch_data($openMeteoUrl);
-  $openWeatherData = fetch_data($openWeatherUrl);
-  $openMeteoData = json_decode($openMeteoData, true);
-  $openWeatherData = json_decode($openWeatherData, true);
+  $open_weather_current_data = fetch_data($open_weather_current_url);
+  $open_weather_forecast_data = fetch_data($open_weather_forecast_url);
+
+  $open_weather_current_data = json_decode($open_weather_current_data, true);
+  $open_weather_forecast_data = json_decode($open_weather_forecast_data, true);
+
   // Combine the data from both APIs
   $combinedData = [
-      'openMeteoData' => $openMeteoData,
-      'openWeatherData' => $openWeatherData
+      'openWeatherCurrentData' => $open_weather_current_data,
+      'openWeatherForecastData' => $open_weather_forecast_data,
   ];
 
   header('Content-Type: application/json');

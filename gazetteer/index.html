@@ -178,47 +178,16 @@
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content shadow">
           <div class="modal-header bg-success bg-gradient text-white">
-            <h5 class="modal-title">Current Weather</h5>
+            <h5 class="modal-title">Weather</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <table class="table table-striped">
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-cloud-sun fa-xl text-success"></i>
-                </td>
-                <td>Weather</td>
-                <td id="weather-type" class="text-end">value</td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-temperature-high fa-xl text-success"></i>
-                </td>
-                <td>Temperature</td>
-                <td id="temperature" class="text-end">value</td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-gauge-simple fa-xl text-success"></i>
-                </td>
-                <td>Wind Speed</td>
-                <td id="wind-speed" class="text-end">value</td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-wind fa-xl text-success"></i>
-                </td>
-                <td>Wind Gust</td>
-                <td id="wind-gust" class="text-end">value</td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-droplet fa-xl text-success"></i>
-                </td>
-                <td>Humidity</td>
-                <td id="humidity" class="text-end">value</td>
-              </tr>
-            </table>
+            <div id="weather-widget" class="container">
+              <div id="current-weather" class="row">
+              </div>
+              <div id="forecast-weather" class="row">
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal">Close</button>

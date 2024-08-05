@@ -15,7 +15,9 @@ let countryLongitude;
 let countryBorders = [];
 let airportsLayer;
 let landmarksLayer;
+let hospitalsLayer;
 let secondaryData;
+let weatherObjectArray = [];
 
 // -----------
 // Tile Layers
@@ -72,39 +74,6 @@ let newsBtn = L.easyButton(
   },
   "News Headlines"
 );
-let hospitalBtn = L.easyButton(
-  "fa-house-medical fa-xl",
-  function (btn, map) {
-    if (map.hasLayer(hospitalsLayer)) {
-      map.removeLayer(hospitalsLayer);
-    } else {
-      map.addLayer(hospitalsLayer);
-    }
-  },
-  "Show Hospitals"
-);
-let landmarkBtn = L.easyButton(
-  "fa-landmark fa-xl",
-  function (btn, map) {
-    if (map.hasLayer(landmarksLayer)) {
-      map.removeLayer(landmarksLayer);
-    } else {
-      map.addLayer(landmarksLayer);
-    }
-  },
-  "Show Landmarks"
-);
-let airportBtn = L.easyButton(
-  "fa-plane fa-xl",
-  function (btn, map) {
-    if (map.hasLayer(airportsLayer)) {
-      map.removeLayer(airportsLayer);
-    } else {
-      map.addLayer(airportsLayer);
-    }
-  },
-  "Show Airports"
-);
 let homeBtn = L.easyButton(
   "fa-house fa-xl",
   function (btn, map) {
@@ -141,10 +110,6 @@ $(document).ready(function () {
         return countryCode;
       });
     })
-    .then((countryCode) => {
-      console.log("Getting country info...");
-      return getCountryInfo(countryCode);
-    })
     .catch((error) => {
       console.error("Error:", error);
     });
@@ -152,6 +117,7 @@ $(document).ready(function () {
   $("#countrySelect").on("change", function () {
     const selectedCountryCode = $(this).val();
     handleCountryChange(selectedCountryCode);
+    console.log("Getting country info...");
   });
 
   $("#user-currency-amount").on("input", convertCurrency);
@@ -224,13 +190,12 @@ const setMapLocation = (latitude, longitude) => {
     layers: [tileLayers[0]],
   }).setView([latitude, longitude], 6);
   // setView still used, as it means map is loaded before user location processed
+
   layerControl = L.control.layers(basemaps).addTo(map);
 
   // Buttons added to map
   let infoBar = L.easyBar([infoBtn, currencyBtn, weatherBtn, wikiBtn, newsBtn]);
   infoBar.addTo(map);
-  let showHideBar = L.easyBar([landmarkBtn, hospitalBtn, airportBtn]);
-  showHideBar.addTo(map);
   homeBtn.addTo(map);
 };
 
@@ -242,7 +207,9 @@ const handleCountryChange = (countryCode) => {
     })
     .then((countryCode) => {
       getCountryInfo(countryCode);
+      if (airportsLayer) layerControl.removeLayer(airportsLayer);
       getAirports(countryCode);
+      if (hospitalsLayer) layerControl.removeLayer(hospitalsLayer);
       getHospitals(countryCode);
       getNews(countryCode);
     })
@@ -302,6 +269,7 @@ const getCountryInfo = (countryCode) => {
       countryBorders.push(geoNamesData.geonames[0].east);
       countryBorders.push(geoNamesData.geonames[0].west);
       // Fetch cities and landmarks
+      if (landmarksLayer) layerControl.removeLayer(landmarksLayer);
       getCountryFeatures(countryBorders, countryCode);
       // Fetch wiki links
       getWikiLinks(countryName);
@@ -407,47 +375,102 @@ const getWeather = (countryLatitude, countryLongitude) => {
     url: "libraries/php/get_weather.php?lat=" + countryLatitude + "&lng=" + countryLongitude,
     type: "GET",
     dataType: "json",
-    success: function (data) {
-      let openMeteoData = data.openMeteoData;
-      let openWeatherData = data.openWeatherData;
-      // Open Meteo Data
-      if (openMeteoData) {
-        // Format data
-        const temperature = openMeteoData.current.temperature_2m + " °C";
-        $("#temperature").text(temperature);
-      } else {
-        console.log("Weather information not found.");
-        alert("Weather info not found");
-      }
-      // Open Weather Data
-      if (openWeatherData) {
-        // Format data
-        weatherDescription = capitaliseWord(openWeatherData.weather[0].description);
-        $("#weather-type").text(weatherDescription);
-        let windSpeed;
-        if (openWeatherData.wind.speed) {
-          windSpeed = openWeatherData.wind.speed + " km/h";
-        } else {
-          windSpeed = "No data to show";
-        }
-        $("#wind-speed").text(windSpeed);
-        let windGust;
-        if (openWeatherData.wind.gust) {
-          windGust = openWeatherData.wind.gust + " km/h";
-        } else {
-          windGust = "No data to show";
-        }
-        $("#wind-gust").text(windGust);
-        const humidity = openWeatherData.main.humidity + "%";
-        $("#humidity").text(humidity);
-      } else {
-        console.log("Weather information not found.");
-        alert("Weather info not found");
-      }
-    },
     error: function (error) {
       console.error("Error fetching data:", error);
     },
+    success: function (data) {
+      let openWeatherCurrentData = data.openWeatherCurrentData;
+      let openWeatherForecastData = data.openWeatherForecastData;
+      // Clear weatherObjectArray for reuse when country changed
+      weatherObjectArray = [];
+
+      // Puts current weather into object for createWeatherContainers()
+      if (openWeatherCurrentData) {
+        const weatherObject = {
+          location: openWeatherCurrentData.name,
+          description: capitaliseWord(openWeatherCurrentData.weather[0].description),
+          type: openWeatherCurrentData.weather[0].main,
+          icon: openWeatherCurrentData.weather[0].icon,
+          humidity: openWeatherCurrentData.main.humidity + "%",
+          temperature: openWeatherCurrentData.main.temp + " °C",
+          wind: openWeatherCurrentData.wind.gust + " mph",
+        };
+        weatherObjectArray.push(weatherObject);
+      } else {
+        console.log("No current weather found");
+      }
+
+      // Puts forecast weather into object for createWeatherContainers()
+      if (openWeatherForecastData) {
+        let timezoneOffset = openWeatherForecastData.city.timezone;
+        let i = 0;
+        openWeatherForecastData.list.forEach((forecast) => {
+          // Only pulls next 4 forecast results
+          if (i <= 3) {
+            // Adjusts time for selected country, as API always returns in UTC (Coordinated Universal Time)
+            const utcDate = new Date(forecast.dt * 1000);
+            const localDate = new Date(utcDate.getTime() + timezoneOffset * 1000);
+            const hours = String(localDate.getUTCHours()).padStart(2, "0");
+            const minutes = String(localDate.getUTCMinutes()).padStart(2, "0");
+            const localTime = `${hours}:${minutes}`;
+
+            const weatherObject = {
+              description: capitaliseWord(forecast.weather[0].description),
+              type: forecast.weather[0].main,
+              icon: forecast.weather[0].icon,
+              humidity: forecast.main.humidity + "%",
+              temperature: forecast.main.temp + " °C",
+              wind: forecast.wind.gust + " mph",
+              time: localTime,
+            };
+            weatherObjectArray.push(weatherObject);
+            i++;
+          }
+        });
+      } else {
+        console.log("No weather forecast found");
+      }
+
+      createWeatherContainers(weatherObjectArray);
+    },
+  });
+};
+
+const createWeatherContainers = (weatherObjectArray) => {
+  let currentWeather = weatherObjectArray.shift();
+  let forecastWeather = weatherObjectArray;
+
+  // Ensures containers are empty and reset for country change
+  $("#current-weather").empty();
+  $("#forecast-weather").empty();
+
+  const currentWeatherTile = $(`
+    <div id="current-summary" class="col-4">
+      <img src="https://openweathermap.org/img/wn/${currentWeather.icon}@2x.png" alt="${currentWeather.description}">
+      <div class="weather-temp">${currentWeather.temperature}</div>
+    </div>
+    <div id="current-info" class="col-8 d-flex flex-column justify-content-center">
+      <div class="weather-location">${currentWeather.location}</div>
+      <div class="weather-desc">${currentWeather.description}</div>
+
+      <div class="weather-humidity">Humidity: ${currentWeather.humidity}</div>
+      <div class="weather-wind">Wind: ${currentWeather.wind}</div>
+    </div>
+  `);
+  $("#current-weather").append(currentWeatherTile);
+
+  forecastWeather.forEach((forecast) => {
+    let forecastWeatherTile = $(`
+      <div class="forecast-weather-tile col-3">
+      <div class="weather-time">${forecast.time}</div>
+        <img src="https://openweathermap.org/img/wn/${forecast.icon}.png" alt="${forecast.description}">
+        <div class="weather-desc">${forecast.description}</div>
+        <div class="weather-temp">${forecast.temperature}</div>
+        <div class="weather-humidity">Humidity: ${forecast.humidity}</div>
+        <div class="weather-wind">Wind: ${forecast.wind}</div>
+      </div>
+    `);
+    $("#forecast-weather").append(forecastWeatherTile);
   });
 };
 
@@ -463,16 +486,16 @@ const getNews = (countryCode) => {
       newsLinksList.empty();
       if (newsData && newsData.length > 0) {
         $.each(newsData, function (index, article) {
-            const articleImg = article.image;
-            const title = article.title;
-            const url = article.url;
-            const listItem = $("<li class='list-group-item'>");
-            const img = $("<img>").attr("src", articleImg).attr("alt", title);
-            const anchorProperty = $("<a>").attr("href", url).attr("target", "_blank").attr("rel", "noopener").text(title);
-            listItem.append(img);
-            listItem.append(anchorProperty);
-            newsLinksList.append(listItem);
-      });
+          const articleImg = article.image;
+          const title = article.title;
+          const url = article.url;
+          const listItem = $("<li class='list-group-item'>");
+          const img = $("<img>").attr("src", articleImg).attr("alt", title);
+          const anchorProperty = $("<a>").attr("href", url).attr("target", "_blank").attr("rel", "noopener").text(title);
+          listItem.append(img);
+          listItem.append(anchorProperty);
+          newsLinksList.append(listItem);
+        });
       } else {
         newsLinksList.append("<li class='list-group-item'>No results found</li>");
       }
@@ -605,6 +628,7 @@ const getLandmarks = (data) => {
     marker.bindPopup(`<b>${landmark.name}</b><p>${landmark.description}</p>`);
     landmarksLayer.addLayer(marker);
   });
+  layerControl.addOverlay(landmarksLayer, "Landmarks");
 };
 
 const getAirports = (countryCode) => {
@@ -612,6 +636,9 @@ const getAirports = (countryCode) => {
     url: "libraries/php/get_airports.php?countryCode=" + countryCode,
     type: "GET",
     dataType: "json",
+    error: function (error) {
+      console.error("Error fetching data:", error);
+    },
     success: function (data) {
       if (data) {
         const airportData = data.geonames;
@@ -627,20 +654,19 @@ const getAirports = (countryCode) => {
           shape: "square",
           prefix: "fa",
         });
+
         airportsLayer = L.markerClusterGroup();
         airportsArray.forEach((airport) => {
           let marker = L.marker([airport.lat, airport.lng], { icon: airportMarker });
           marker.bindPopup(`<b>${airport.name}</b>`);
           airportsLayer.addLayer(marker);
         });
+        layerControl.addOverlay(airportsLayer, "Airports");
       } else {
         console.log("Airport information not found.");
         alert("Airport info not found");
       }
-    },
-    error: function (error) {
-      console.error("Error fetching data:", error);
-    },
+    }
   });
 };
 
@@ -649,6 +675,9 @@ const getHospitals = (countryCode) => {
     url: "libraries/php/get_hospitals.php?countryCode=" + countryCode,
     type: "GET",
     dataType: "json",
+    error: function (error) {
+      console.error("Error fetching data:", error);
+    },
     success: function (data) {
       if (data) {
         const hospitalData = data.geonames;
@@ -664,20 +693,19 @@ const getHospitals = (countryCode) => {
           shape: "square",
           prefix: "fa",
         });
+
         hospitalsLayer = L.markerClusterGroup();
         hospitalsArray.forEach((hospital) => {
           let marker = L.marker([hospital.lat, hospital.lng], { icon: hospitalMarker });
           marker.bindPopup(`<b>${hospital.name}</b>`);
           hospitalsLayer.addLayer(marker);
         });
+        layerControl.addOverlay(hospitalsLayer, "Hospitals");
       } else {
         console.log("Hospital information not found.");
         alert("Hospital info not found");
       }
-    },
-    error: function (error) {
-      console.error("Error fetching data:", error);
-    },
+    }
   });
 };
 

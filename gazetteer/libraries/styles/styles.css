@@ -73,3 +73,46 @@ body {
 #news-links-list img {
   max-width: 100%;
 }
+
+/* Weather modal styles */
+#current-weather {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px rgb(198, 198, 198) solid;
+}
+
+#current-summary {
+  text-align: center;
+}
+  
+#current-weather .weather-temp {
+  font-size: 1.5rem;
+}
+
+#current-weather .weather-location {
+  font-size: 0.8rem;
+  color: #3e3e3e;
+}
+
+.weather-desc {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+  
+.forecast-weather-tile {
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+.forecast-weather-tile:nth-last-child(-n+3) {
+  border-left: 1px rgb(198, 198, 198) solid;
+}
+
+.forecast-weather-tile .weather-time {
+  font-weight: bold;
+}
+
+.forecast-weather-tile .weather-temp {
+  padding-bottom: 0.5rem;
+}

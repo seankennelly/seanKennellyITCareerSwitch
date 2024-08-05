@@ -16,7 +16,7 @@ https://seankennelly.com/gazetteer
     - [Current Weather](#current-weather)
     - [Wikipedia Links](#wikipedia-links)
     - [News](#news)
-    - [Toggle Buttons](#toggle-buttons)
+    - [Layer Control Buttons](#layer-control-buttons)
     - [Home](#home)
   - [Known Issues](#known-issues)
   - [Prospective Improvements](#prospective-improvements)
@@ -60,8 +60,6 @@ Upon initial page load, the browser passes user coordinates to the app, which ce
 ### Pull Country Info
 Whichever country is selected by the user has its data pulled and displayed. On initial page load this is for the user's location country. Data is fed to map layers and modals. The country's cities data is automatically added to the map.
 
-
-
 ### Buttons
 #### Info
 The info modal displays data on the selected country, including:
@@ -79,22 +77,18 @@ The currency modal displays the name, symbol and currency code for the selected 
 ![A screenshot of the currency modal](images/readme_images/readme_img_3.jpeg)
 
 #### Current Weather
-This modal shows current weather for the selected country, including:
-- Current weather (sunny, cloudy etc)
-- Temperature
-- Wind Speed
-- Wind Gust
-- Humidity
+This modal shows current weather and forecast for the selected country. The icons displayed are different depending on weather type and whether the country is in day or night.
+![A screenshot of the weather modal](images/readme_images/readme_img_4.png)
 
 #### Wikipedia Links
 This modal shows the top Wikipedia links for the selected country.
 
 #### News
-This modal shows the top 10 headlines for the country that has been selected.
-![A screenshot of the news modal](images/readme_images/readme_img_4.png)
+This modal shows the top ten headlines for the country that has been selected.
+![A screenshot of the news modal](images/readme_images/readme_img_5.png)
 
-#### Toggle Buttons
-The three toggle buttons will show or hide map information pertaining to:
+#### Layer Control Buttons
+The three layer control buttons will show or hide map information pertaining to:
 - Landmarks
 - Hospitals
 - Airports
