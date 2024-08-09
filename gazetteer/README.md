@@ -24,7 +24,7 @@ https://seankennelly.com/gazetteer
 ---
 
 ## Project Outline
-The brief for this project was to a creative an interactive gazetteer-style map web application, populated by geographical data pulled from APIs. The app needed to be responsive and pull data from a variety of sources to create an interesting end-user experience. Due to its highly interactive nature, I have concentrated on a minimalist design, encouraging users to explore the available controls to discover functionality. 
+The brief for this project was to create an interactive gazetteer-style map web application, populated by geographical data pulled from APIs. The app needed to be responsive and pull data from a variety of sources to create an interesting end-user experience. Due to its highly interactive nature, I have concentrated on a minimalist design, encouraging users to explore the available controls to discover functionality. 
 
 ## Installation
 To run the app locally, download the files and create a `config.php` file in `libraries/php`. This file will hold your API keys for the following APIs:
